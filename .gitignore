@@ -1,3 +1,5 @@
 /gbp.iml
 /.idea
 /venv
+/build
+src/gbp.egg-info
