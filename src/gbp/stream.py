@@ -1,45 +1,31 @@
 import asyncio
+import logging
 from typing import List
-
-from .debug import MachineStateTracker
 
 '''
 Tracks stream state and will push new activities to a stream when capacity is available.
 Maintains futures that can be awaited when submitted activities are complete.
 '''
 
-from .client import ConnectionController
+from .client import ConnectionCommandMethods
 from .effects import RegisteredGbcMessageEffect
 from .gbc import ActivityStreamItem
 from .gbc_extra import StreamStatus, GlowbuzzerInboundMessage
 
 
 class Stream(RegisteredGbcMessageEffect):
-    def __init__(self, controller: ConnectionController, index: int):
-        self.controller = controller
+    def __init__(self, index: int):
         self.tag = 0
         self.queue = []
         self.streamIndex = index
         self._status = StreamStatus()
-        self.opEnabledEffect = MachineStateTracker()
-        controller.register_effect(self)
-        controller.register_effect(self.opEnabledEffect)
 
-    # def __enter__(self):
-    #     print("stream entered")
-    #     self.controller.register_stream(self)
-
-    def __exit__(self):
-        print("Exit stream")
-        self.controller.unregister_effect(self)
-        self.controller.unregister_effect(self.opEnabledEffect)
-
-    def map(self, msg: GlowbuzzerInboundMessage):
+    def select(self, msg: GlowbuzzerInboundMessage):
         return msg.stream
 
-    async def act(self, status: GlowbuzzerInboundMessage):
-        print("Ready to stream!", status, "queue size:", len(self.queue))
-        await self.controller.send_stream_items([activity[0] for activity in self.queue])
+    async def on_change(self, state: GlowbuzzerInboundMessage, send: ConnectionCommandMethods):
+        logging.info("Ready to stream! Queue size: %d", len(self.queue))
+        await send.stream_items([activity[0] for activity in self.queue])
 
     def exec(self, activities: List[ActivityStreamItem]):
         def create_future(activity):

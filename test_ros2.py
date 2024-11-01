@@ -7,7 +7,7 @@ import asyncio
 
 from gbp import client
 from gbp.op import OpEnabledEffect
-from gbp.heartbeat import HeatbeatEffect
+from gbp.heartbeat import HeatbeatEcho
 from gbp.stream import Stream
 from gbp.gbc import ActivityStreamItem, ACTIVITYTYPE, DwellActivityParams
 
@@ -61,7 +61,7 @@ class WebSocketNode(Node):
         try:
             op=OpEnabledEffect(self.controller)
             await op.enable_operation()
-            HeatbeatEffect(self.controller)
+            HeatbeatEcho(self.controller)
             stream=Stream(self.controller, 0)
             await stream.exec([
                 ActivityStreamItem(

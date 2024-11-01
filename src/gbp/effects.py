@@ -1,13 +1,31 @@
 from abc import ABC, abstractmethod
-from gbp.gbc_extra import GlowbuzzerCombinedStatus, StreamStatus, GlowbuzzerInboundMessage
+from typing import Any
+
+from gbp.client import ConnectionCommandMethods
+from gbp.gbc_extra import GlowbuzzerInboundMessage
 
 
 class RegisteredGbcMessageEffect(ABC):
+    """
+    Interface for effects that are triggered by GBC messages
+    """
+
     @abstractmethod
-    def map(self, status: GlowbuzzerInboundMessage):
+    def select(self, status: GlowbuzzerInboundMessage) -> Any:
+        """
+        Select the value from the GBC message that this effect is interested in.
+
+        :param status: The full GBC status object
+        :return: The value to be tracked
+        """
         pass
 
     @abstractmethod
-    def act(self, status: GlowbuzzerInboundMessage):
-        pass
+    async def on_change(self, state, send: ConnectionCommandMethods) -> None:
+        """
+        Called when the selected value changes.
 
+        :param state: The state that was selected
+        :param send: Object containing methods used to send messages to GBC, if required
+        """
+        pass
