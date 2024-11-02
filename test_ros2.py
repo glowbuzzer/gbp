@@ -6,9 +6,9 @@ from std_srvs.srv import Empty
 import asyncio
 
 from gbp import client
-from gbp.op import OpEnabledEffect
-from gbp.heartbeat import HeatbeatEcho
-from gbp.stream import Stream
+from gbp.effects.op import OpEnabledEffect
+from gbp.effects.heartbeat import HeatbeatEcho
+from gbp.effects.stream import Stream
 from gbp.gbc import ActivityStreamItem, ACTIVITYTYPE, DwellActivityParams
 
 # This class combines a ROS2 node and a GBC WebSocket client

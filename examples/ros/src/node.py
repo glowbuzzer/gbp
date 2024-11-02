@@ -10,13 +10,13 @@ from rclpy.lifecycle.node import Node
 from std_srvs.srv import Empty
 
 from decorator import with_asyncio, AsyncIoSupport
-from gbp.connection import GbcConnectionProvider
+from gbp.connection import GbcClient
 from logger import Ros2LoggingHandler
 from util import enable_operation, feedback_msg
 
 
 class SimpleNode(Node, AsyncIoSupport):
-    def __init__(self, controller: GbcConnectionProvider, loop: AbstractEventLoop):
+    def __init__(self, controller: GbcClient, loop: AbstractEventLoop):
         Node.__init__(self, "simple_node")
         AsyncIoSupport.__init__(self, loop)
 

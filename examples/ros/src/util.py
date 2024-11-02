@@ -1,14 +1,14 @@
 from action_simple.action import ActionSimple
 
-from gbp.connection import GbcConnectionProvider
-from gbp.op import OpEnabledEffect
+from gbp.connection import GbcClient
+from gbp.effects.op import OpEnabledEffect
 
 '''
 Simple helper to create a temporary effect to enable operation. Unregisters the effect after complete.
 '''
 
 
-async def enable_operation(controller: GbcConnectionProvider) -> None:
+async def enable_operation(controller: GbcClient) -> None:
     op = OpEnabledEffect()
     controller.register(op)
     try:

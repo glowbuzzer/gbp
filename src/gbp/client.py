@@ -1,24 +1,33 @@
 import json
-import logging
 from abc import ABC, abstractmethod
-from typing import List
 
-from gbp.gbc import MachineCommand, ActivityStreamItem
+from gbp.gbc import MachineCommand
+from gbp.gbc_extra import GlowbuzzerStreamRequest
+from gbp.logger import log
 
 
-class ConnectionCommandMethods(ABC):
+class GbcWebsocketInterface(ABC):
     @abstractmethod
-    def send(self, message:str):
+    async def send(self, message: str):
+        """
+        Send raw message to GBC.
+        :param message: The message to send
+        """
         pass
 
-    def machine_command(self, command: MachineCommand):
+    async def command(self, command: MachineCommand):
+        """
+        Send a machine command to GBC.
+        :param command: The command to send
+        """
         msg = {"command": {"machine": {"0": {"command": command.model_dump(exclude_none=True)}}}}
-        return self.send(json.dumps(msg))
+        return await self.send(json.dumps(msg))
 
-    # noinspection PyMethodMayBeStatic
-    def stream_items(self, items: List[ActivityStreamItem]):
-        # TODO
-        json_string = '[' + ','.join([model.model_dump_json(exclude_none=True) for model in items]) + ']'
-        logging.info("Sending stream items: %s", json_string)
-        # Send the request via WebSocket
-        # await self.websocket.send(json_string)
+    async def stream(self, request: GlowbuzzerStreamRequest):
+        """
+        Send activities to GBC.
+        :param request: The stream index and activities to send.
+        """
+        msg = {"stream": request.model_dump(exclude_none=True, mode="json")}
+        log.debug("Sending stream items: %s", msg)
+        return await self.send(json.dumps(msg))

@@ -1,10 +1,11 @@
 from enum import Enum
 
-'''
+"""
 Provides low-level machine status word and control word handling. Understands how to
 interpret the status word and how to generate the control word to transition GBC through
 the CIA402 state machine.
-'''
+"""
+
 
 class MachineState(Enum):
     UNKNOWN = "UNKNOWN"

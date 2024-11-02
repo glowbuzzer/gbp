@@ -1,6 +1,6 @@
 import asyncio
 
-from gbp.client import ConnectionCommandMethods
+from gbp.client import GbcWebsocketInterface
 from gbp.effects import RegisteredGbcMessageEffect
 from gbp.gbc import MachineCommand
 from gbp.gbc_extra import GlowbuzzerInboundMessage
@@ -25,15 +25,13 @@ class OpEnabledEffect(RegisteredGbcMessageEffect):
         if msg.status and msg.status.machine:
             return msg.status.machine.statusWord
 
-    async def on_change(self, new_state: int, send: ConnectionCommandMethods):
+    async def on_change(self, new_state: int, send: GbcWebsocketInterface):
         new_state = new_state
         self.state = determine_machine_state(new_state)
         next_control_word = handle_machine_state(self.state, new_state, DesiredState.OPERATIONAL)
         if next_control_word:
-            command: MachineCommand = MachineCommand(
-                controlWord=next_control_word
-            )
-            await send.machine_command(command)
+            command: MachineCommand = MachineCommand(controlWord=next_control_word)
+            await send.command(command)
 
         if self.state == MachineState.OPERATION_ENABLED:
             self._desired_state_future.set_result(None)

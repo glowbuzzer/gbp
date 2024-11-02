@@ -1,15 +1,18 @@
 import asyncio
 import logging
-from typing import Dict, Any, Callable, Coroutine, Type
+from typing import Dict, Any, Callable, Coroutine, TypeVar
 
 import websockets
+from websockets import ConnectionClosedError
 
-from .client import ConnectionCommandMethods
+from .client import GbcWebsocketInterface
 from .effects import RegisteredGbcMessageEffect
 from .gbc_extra import GlowbuzzerInboundMessage
 
+T = TypeVar("T", bound=RegisteredGbcMessageEffect)
 
-class GbcConnectionProvider(ConnectionCommandMethods):
+
+class GbcClient(GbcWebsocketInterface):
     """
     Provides a connection to the GBC websocket server and handles all incoming messages
     """
@@ -18,35 +21,35 @@ class GbcConnectionProvider(ConnectionCommandMethods):
         self.uri = uri
         self.websocket = None
         self.registered_message_effects: Dict[RegisteredGbcMessageEffect, Any] = {}
+        self.shutdown = False
 
-    async def run(self, blocking=True):
+    async def connect(self, blocking=True):
         """
         Connect to the websocket and start receiving messages. If blocking is True, this method will block until the
         connection is closed. If blocking is False, this method will return immediately and messages will be received
         in the background.
         :param blocking: Whether to block waiting for messages
         """
+        self.shutdown = False
         self.websocket = await websockets.connect(self.uri)
         if blocking:
             await self.receive_messages()
         else:
             asyncio.get_event_loop().create_task(self.receive_messages())
 
-    async def run_effect(self, effect_cls: Type[RegisteredGbcMessageEffect],
-                         fn: Callable[[RegisteredGbcMessageEffect], Coroutine]):
+    async def run_once(self, effect: T, callback: Callable[[T], Coroutine]):
         """
-        Run a temporary effect in the context of the connection. The effect will be registered, the function will be called with
-        the effect, and then the effect will be unregistered when complete.
-        :param effect_cls: The effect class to instantiate
-        :param fn: The function to call with the effect
+        Run a temporary effect in the context of the connection. The effect will be registered, the callback function will be invoked with
+        the effect as a parameter, and the effect will be unregistered when complete.
+        :param effect: The effect
+        :param callback: The function to call with the effect
         :return:
         """
-        op = effect_cls()
-        self.register(op)
+        self.register(effect)
         try:
-            return await fn(op)
+            return await callback(effect)
         finally:
-            self.unregister(op)
+            self.unregister(effect)
 
     def register(self, *effects: RegisteredGbcMessageEffect):
         """
@@ -78,7 +81,11 @@ class GbcConnectionProvider(ConnectionCommandMethods):
         logging.info("Starting to receive messages")
         n = 0
         while True:
-            message = await self.websocket.recv()
+            try:
+                message = await self.websocket.recv()
+            except ConnectionClosedError:
+                break
+
             # TODO: remove debug logging, but this is helpful to know that the connection is still alive
             n += 1
             if n % 25 == 0:
@@ -97,9 +104,14 @@ class GbcConnectionProvider(ConnectionCommandMethods):
                     except Exception as e:
                         logging.error(f"Error handling effect {effect}: {e}")
 
+                if self.shutdown:
+                    self.websocket.close()
+                    break
+
             except Exception as e:
                 logging.error(f"Error handling inbound websocket message: {e}")
 
     async def close(self):
-        # Close the WebSocket connection
-        await self.websocket.close()
+        self.shutdown = True
+        if self.websocket:
+            await self.websocket.close()

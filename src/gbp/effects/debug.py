@@ -1,11 +1,11 @@
 import logging
 from typing import TypeAlias, Tuple
 
-import gbp.effects
-from gbp.client import ConnectionCommandMethods
+from gbp.client import GbcWebsocketInterface
 from gbp.effects import RegisteredGbcMessageEffect
 from gbp.gbc import OPERATION_ERROR
 from gbp.gbc_extra import GlowbuzzerInboundMessage
+from gbp.logger import log
 from gbp.machine_state import MachineState, determine_machine_state
 
 
@@ -19,15 +19,15 @@ class MachineStateLogger(RegisteredGbcMessageEffect):
         if msg.status and msg.status.machine:
             return determine_machine_state(msg.status.machine.statusWord)
 
-    async def on_change(self, new_value: MachineState, send: ConnectionCommandMethods):
+    async def on_change(self, new_value: MachineState, send: GbcWebsocketInterface):
         self.state = new_value
-        logging.info("Change in CIA402 state: %s", self.state)
+        log.debug("Change in CIA402 state: %s", self.state)
 
 
 OperationErrorLoggingSelectType: TypeAlias = Tuple[OPERATION_ERROR, str]
 
 
-class OperationErrorLogger(gbp.effects.RegisteredGbcMessageEffect):
+class OperationErrorLogger(RegisteredGbcMessageEffect):
     """
     Simple effect to print when the operation error state changes
     """
@@ -36,5 +36,5 @@ class OperationErrorLogger(gbp.effects.RegisteredGbcMessageEffect):
         if msg.status:
             return msg.status.machine.operationError, msg.status.machine.operationErrorMessage
 
-    async def on_change(self, args: OperationErrorLoggingSelectType, send: ConnectionCommandMethods):
-        logging.info("Operating error state changed: %s", args)
+    async def on_change(self, args: OperationErrorLoggingSelectType, send: GbcWebsocketInterface):
+        log.debug("Operating error state changed: %s", args)

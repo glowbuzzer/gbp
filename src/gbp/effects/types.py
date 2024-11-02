@@ -1,7 +1,7 @@
 from abc import ABC, abstractmethod
 from typing import Any
 
-from gbp.client import ConnectionCommandMethods
+from gbp.client import GbcWebsocketInterface
 from gbp.gbc_extra import GlowbuzzerInboundMessage
 
 
@@ -21,7 +21,7 @@ class RegisteredGbcMessageEffect(ABC):
         pass
 
     @abstractmethod
-    async def on_change(self, state, send: ConnectionCommandMethods) -> None:
+    async def on_change(self, state, send: GbcWebsocketInterface) -> None:
         """
         Called when the selected value changes.
 

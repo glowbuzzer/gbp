@@ -1,7 +1,7 @@
 from rclpy.node import Node
 from rclpy.executors import MultiThreadedExecutor
 
-from gbp.client import ConnectionCommandMethods
+from gbp.client import GbcWebsocketInterface
 from gbp.effects import RegisteredGbcMessageEffect
 from gbp.gbc_extra import GlowbuzzerInboundMessage
 
@@ -17,5 +17,5 @@ class RosSpinner(RegisteredGbcMessageEffect):
         if msg.status and msg.status.machine:
             return msg.status.machine.heartbeat
 
-    async def on_change(self, state: int, controller: ConnectionCommandMethods):
+    async def on_change(self, state: int, controller: GbcWebsocketInterface):
         self.executor.spin_once(0)

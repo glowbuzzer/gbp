@@ -2,9 +2,31 @@ from typing import List, Optional, Any
 
 from pydantic import BaseModel
 
-from gbp.gbc import STREAMSTATE, MachineStatus, ActivityStatus, JointStatus, Vector3, Quat, ModbusUiinStatus, DinStatus, \
-    SafetyDinStatus, ModbusDinStatus, TaskStatus, SerialStatus, AoutStatus, AoutCommand, IoutStatus, IoutCommand, \
-    DoutStatus, DoutCommand, SafetyDoutStatus, SafetyDoutCommand, DinCommand, SafetyDinCommand
+from gbp.gbc import (
+    STREAMSTATE,
+    MachineStatus,
+    ActivityStatus,
+    JointStatus,
+    Vector3,
+    Quat,
+    ModbusUiinStatus,
+    DinStatus,
+    SafetyDinStatus,
+    ModbusDinStatus,
+    TaskStatus,
+    SerialStatus,
+    AoutStatus,
+    AoutCommand,
+    IoutStatus,
+    IoutCommand,
+    DoutStatus,
+    DoutCommand,
+    SafetyDoutStatus,
+    SafetyDoutCommand,
+    DinCommand,
+    SafetyDinCommand,
+    ActivityStreamItem,
+)
 
 
 class StreamStatus(BaseModel):
@@ -56,9 +78,9 @@ class ExternalIOStatus(BaseModel):
     iin: List[int]
     uiin: List[int]
     din: List[bool]
-    iout: List['IntegerOutputStatus']  # Defined elsewhere
-    uiout: List['IntegerOutputStatus']  # Defined elsewhere
-    dout: List['DigitalOutputStatus']  # Defined elsewhere
+    iout: List["IntegerOutputStatus"]  # Defined elsewhere
+    uiout: List["IntegerOutputStatus"]  # Defined elsewhere
+    dout: List["DigitalOutputStatus"]  # Defined elsewhere
 
 
 class GlowbuzzerMachineStatus(MachineStatus):
@@ -104,3 +126,8 @@ class GlowbuzzerInboundMessage(BaseModel):
     telemetry: Optional[List[Telemetry]] = None
     response: Optional[Any] = None
     emstat: Optional[dict] = None
+
+
+class GlowbuzzerStreamRequest(BaseModel):
+    streamIndex: int
+    items: List[ActivityStreamItem]
