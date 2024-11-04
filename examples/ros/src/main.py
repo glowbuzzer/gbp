@@ -14,16 +14,16 @@ async def main():
     print("Starting main, thread id=", threading.get_ident())
 
     # Create a WebSocket client
-    controller = GbcClient("ws://localhost:9001/ws")
+    gbc = GbcClient("ws://localhost:9001/ws")
 
     # Initialize ROS
     rclpy.init()
 
     # Create the ROS node
-    node = SimpleNode(controller, asyncio.get_running_loop())
+    node = SimpleNode(gbc, asyncio.get_running_loop())
 
     # Register effects that will be invoked when a GBC websocket message is received
-    controller.register(
+    gbc.register(
         RosSpinner(node),
         HeatbeatEcho(),
         OperationErrorLogger(),
@@ -31,7 +31,7 @@ async def main():
     )
 
     # Run the controller and receive messages
-    await controller.connect()
+    await gbc.connect(blocking=True)
 
 # Run the main function
 try:

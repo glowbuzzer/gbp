@@ -12,7 +12,7 @@ from gbp.logger import log
 
 
 async def main():
-    log.setLevel(logging.DEBUG)
+    log.setLevel(logging.INFO)
 
     log.info("Starting")
 
@@ -30,12 +30,13 @@ async def main():
         await stream.exec(
             ActivityStreamItem(
                 activityType=ACTIVITYTYPE.ACTIVITYTYPE_DWELL,
-                dwell=DwellActivityParams(msToDwell=3000)
+                dwell=DwellActivityParams(msToDwell=2000)
             )
         )
 
     await controller.run_once(OpEnabledEffect(), lambda op: cast(OpEnabledEffect, op).enable_operation())
     log.info("Operation enabled!")
+    log.info("Executing dwell activity")
 
     await controller.run_once(Stream(0), stream_callback)
 

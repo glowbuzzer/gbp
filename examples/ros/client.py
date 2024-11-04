@@ -29,8 +29,8 @@ class SimpleActionClient(Node):
     def get_result_callback(self, future):
         result = future.result().result
         self.get_logger().info(f'Final result: {result.output}')
-        # self._client.destroy()
-        # rclpy.shutdown()
+        self._client.destroy()
+        rclpy.shutdown()
 
 def main(args=None):
     rclpy.init(args=args)

@@ -11,69 +11,49 @@ from std_srvs.srv import Empty
 
 from decorator import with_asyncio, AsyncIoSupport
 from gbp.connection import GbcClient
+from gbp.effects import Stream, OpEnabledEffect
+from gbp.gbc import ActivityStreamItem, ACTIVITYTYPE, DwellActivityParams
 from logger import Ros2LoggingHandler
 from util import enable_operation, feedback_msg
 
 
 class SimpleNode(Node, AsyncIoSupport):
-    def __init__(self, controller: GbcClient, loop: AbstractEventLoop):
+    def __init__(self, gbc: GbcClient, loop: AbstractEventLoop):
         Node.__init__(self, "simple_node")
         AsyncIoSupport.__init__(self, loop)
 
         ros_handler = Ros2LoggingHandler(self.get_logger())
         logging.getLogger().addHandler(ros_handler)
 
-        self.controller = controller
+        self.gbc = gbc
 
-        self.task = self.create_service(Empty, "test_service", self.service_callback)
-
-        self._action_server = ActionServer(
-            self,
-            ActionSimple,
-            'simple',
-            self.action_server_callback)
+        self._action_server = ActionServer(self, ActionSimple, "simple", self.action_server_callback)
 
         logging.info("Node created")
 
     @with_asyncio(timeout=20)
     async def action_server_callback(self, goal_handle: ServerGoalHandle):
-        self.get_logger().info(f'Executing goal, thread id={threading.get_ident()}')
+        self.get_logger().info(f"Executing goal, thread id={threading.get_ident()}")
 
         goal_handle.publish_feedback(feedback_msg("Starting"))
 
-        self.get_logger().info("Enabling operation")
-        await enable_operation(self.controller)
+        logging.info("Enabling operation")
+        await self.gbc.run_once(OpEnabledEffect(), lambda op: op.enable_operation())
 
         goal_handle.publish_feedback(feedback_msg("Operation enabled!"))
 
-        # TODO: execute do a stream command (not implemented yet in gbp)
-        # stream = Stream(0)
-        # controller.register(stream)
-        # try:
-        #     await stream.exec([
-        #         ActivityStreamItem(
-        #             activityType=ACTIVITYTYPE.ACTIVITYTYPE_DWELL,
-        #             dwell=DwellActivityParams(msToDwell=1000)
-        #         )
-        #     ])
-        # finally:
-        #     controller.unregister(stream)
+        async def stream_callback(stream: Stream):
+            logging.info("Stream callback: %s", stream)
+            await stream.exec(
+                ActivityStreamItem(
+                    activityType=ACTIVITYTYPE.ACTIVITYTYPE_DWELL, dwell=DwellActivityParams(msToDwell=2000)
+                )
+            )
 
-        # simulate an activity
-        self.get_logger().info('Sleeping')
-        await asyncio.sleep(5)
-        self.get_logger().info('Sleep done')
+        await self.gbc.run_once(Stream(0), stream_callback)
 
         result = ActionSimple.Result()
         result.output = 42
         goal_handle.succeed()
 
         return result
-
-    @with_asyncio(timeout=20)
-    async def service_callback(self, _request, response) -> None:
-        self.get_logger().info("Task started")
-        await asyncio.sleep(5)
-        self.get_logger().info("Task finished")
-
-        return response
