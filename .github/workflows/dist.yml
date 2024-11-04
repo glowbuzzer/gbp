@@ -25,8 +25,6 @@ jobs:
 
       - name: Build package
         run: |
-#          VERSION=${GITHUB_REF#refs/tags/v}
-#          sed -i "s/version=.*/version='$VERSION',/" setup.py
           python -m build
 
       - name: Attach artifact to build
