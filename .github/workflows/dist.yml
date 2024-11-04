@@ -2,8 +2,10 @@ name: Publish Python Package to S3
 
 on:
   push:
-    branches:
-      - main  # Or specify the branch you want to trigger the deployment
+    tags:
+      - v*
+#    branches:
+#      - main  # Or specify the branch you want to trigger the deployment
 
 env:
   AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
