@@ -1,0 +1,60 @@
+name: Publish Python Package to S3
+
+on:
+  push:
+    branches:
+      - main  # Or specify the branch you want to trigger the deployment
+
+jobs:
+  publish:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.x'
+
+      - name: Install build tools
+        run: |
+          python -m pip install --upgrade pip
+          pip install build
+
+      - name: Build package
+        run: |
+          VERSION=${GITHUB_REF#refs/tags/v}
+          sed -i "s/version=.*/version='$VERSION',/" setup.py
+          python -m build
+
+      - name: Attach artifact to build
+        uses: actions/upload-artifact@v4
+        with:
+          name: dist
+          path: dist
+
+#      - name: Upload to S3
+#        env:
+#          AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
+#          AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+#          AWS_REGION: ${{ secrets.AWS_REGION }}
+#        run: |
+#          PACKAGE_NAME=$(python setup.py --name)
+#          VERSION=$(python setup.py --version)
+#          S3_BUCKET="s3://your-s3-bucket-name/simple/${PACKAGE_NAME}/"
+#
+#          # Upload the .tar.gz and .whl files to S3
+#          aws s3 cp dist/ ${S3_BUCKET} --recursive
+#
+#          # Generate index.html for the directory
+#          INDEX_FILE=$(mktemp)
+#          echo "<html><body><h1>Index of ${PACKAGE_NAME}</h1><ul>" > $INDEX_FILE
+#          aws s3 ls ${S3_BUCKET} | awk '{print $4}' | while read -r FILE; do
+#            echo "<li><a href=\"$FILE\">$FILE</a></li>" >> $INDEX_FILE
+#          done
+#          echo "</ul></body></html>" >> $INDEX_FILE
+#
+#          # Upload index.html to S3
+#          aws s3 cp $INDEX_FILE ${S3_BUCKET}/index.html --content-type "text/html"
