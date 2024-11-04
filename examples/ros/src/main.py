@@ -6,8 +6,8 @@ import rclpy
 from gbp.connection import GbcClient
 from gbp.effects.debug import OperationErrorLogger, MachineStateLogger
 from gbp.effects.heartbeat import HeatbeatEcho
+from gbp.ros import Ros2Spinner
 from node import SimpleNode
-from spinner import RosSpinner
 
 
 async def main():
@@ -24,7 +24,7 @@ async def main():
 
     # Register effects that will be invoked when a GBC websocket message is received
     gbc.register(
-        RosSpinner(node),
+        Ros2Spinner(node),
         HeatbeatEcho(),
         OperationErrorLogger(),
         MachineStateLogger()

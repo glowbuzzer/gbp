@@ -8,7 +8,7 @@ from gbp.gbc_extra import GlowbuzzerInboundMessage
 '''
 Simple GBC message effect to spin ROS2 node when a message is received
 '''
-class RosSpinner(RegisteredGbcMessageEffect):
+class Ros2Spinner(RegisteredGbcMessageEffect):
     def __init__(self, node: Node):
         self.executor = MultiThreadedExecutor()
         self.executor.add_node(node)

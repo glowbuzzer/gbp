@@ -2,7 +2,6 @@ FROM ros:humble-ros-base
 
 RUN apt update && apt install -y python3-pip
 RUN pip install websockets
-RUN pip install deepdiff
 RUN pip install pydantic
 
 COPY actions /ws/src
