@@ -31,7 +31,7 @@ jobs:
 
       - name: Build package
         run: |
-          sed -i "s/^version = .*/version = ${VERSION}/" setup.cfg
+          sed -i "s|^version = .*|version = ${VERSION}|" setup.cfg
           python -m build
 
       - name: Attach artifact to build
