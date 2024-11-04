@@ -53,7 +53,7 @@ jobs:
           AWS_REGION: eu-west-1
         run: |
           PACKAGE_NAME=$(python setup.py --name)
-          S3_BUCKET="s3://downloads.glowbuzzer.com/releases/gbp/${PACKAGE_NAME}/"
+          S3_BUCKET="s3://downloads.glowbuzzer.com/releases/${PACKAGE_NAME}/"
 
           # Upload the .tar.gz and .whl files to S3
           aws s3 cp dist/ ${S3_BUCKET} --recursive
@@ -67,4 +67,4 @@ jobs:
           echo "</ul></body></html>" >> $INDEX_FILE
 
           # Upload index.html to S3
-          aws s3 cp $INDEX_FILE ${S3_BUCKET}/index.html --content-type "text/html"
+          aws s3 cp $INDEX_FILE ${S3_BUCKET}index.html --content-type "text/html"
