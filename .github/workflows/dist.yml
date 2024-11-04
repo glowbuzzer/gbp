@@ -6,7 +6,7 @@ on:
       - main  # Or specify the branch you want to trigger the deployment
 
 jobs:
-  publish:
+  dist:
     runs-on: ubuntu-latest
 
     steps:
@@ -21,12 +21,12 @@ jobs:
       - name: Install build tools
         run: |
           python -m pip install --upgrade pip
-          pip install build
+          pip install build setuptools_scm
 
       - name: Build package
         run: |
-          VERSION=${GITHUB_REF#refs/tags/v}
-          sed -i "s/version=.*/version='$VERSION',/" setup.py
+#          VERSION=${GITHUB_REF#refs/tags/v}
+#          sed -i "s/version=.*/version='$VERSION',/" setup.py
           python -m build
 
       - name: Attach artifact to build
