@@ -16,7 +16,7 @@ class RegisteredGbcMessageEffect(ABC):
         Select the value from the GBC message that this effect is interested in.
 
         :param status: The full GBC status object
-        :return: The value to be tracked
+        :return: The value to be tracked. This should be deeply comparable with the previous state, for example a Tuple or nested Dict.
         """
         pass
 
