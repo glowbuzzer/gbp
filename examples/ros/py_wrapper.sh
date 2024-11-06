@@ -1,2 +1,2 @@
 #!/bin/bash
-/entrypoint.sh python3 "$@"
+exec /entrypoint.sh python3 "$@"
