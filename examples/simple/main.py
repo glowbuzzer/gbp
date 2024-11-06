@@ -1,5 +1,6 @@
 import asyncio
 import logging
+import signal
 from typing import cast
 
 from gbp.connection import GbcClient
@@ -20,7 +21,7 @@ async def main():
     controller.register(
         HeatbeatEcho(),  # maintain heartbeat with gbc
         OperationErrorLogger(),  # log when an operation error is received
-        MachineStateLogger()  # log machine state changes
+        MachineStateLogger(),  # log machine state changes
     )
 
     await controller.connect(blocking=False)
@@ -28,10 +29,7 @@ async def main():
     async def stream_callback(stream: Stream):
         log.debug("Stream callback: %s", stream)
         await stream.exec(
-            ActivityStreamItem(
-                activityType=ACTIVITYTYPE.ACTIVITYTYPE_DWELL,
-                dwell=DwellActivityParams(msToDwell=2000)
-            )
+            ActivityStreamItem(activityType=ACTIVITYTYPE.ACTIVITYTYPE_DWELL, dwell=DwellActivityParams(msToDwell=2000))
         )
 
     await controller.run_once(OpEnabledEffect(), lambda op: cast(OpEnabledEffect, op).enable_operation())
@@ -44,7 +42,14 @@ async def main():
     await controller.close()
 
 
+def handle_sigterm(*args):
+    log.info("Received SIGTERM, shutting down...")
+    raise KeyboardInterrupt
+
+
 try:
+    signal.signal(signal.SIGTERM, handle_sigterm)
+
     asyncio.run(main())
 except KeyboardInterrupt:
-    print("Program interrupted!")
+    log.info("Program interrupted")

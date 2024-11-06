@@ -1,4 +1,5 @@
 import asyncio
+import signal
 import threading
 
 import rclpy
@@ -33,8 +34,13 @@ async def main():
     # Run the controller and receive messages
     await gbc.connect(blocking=True)
 
+def handle_sigterm(*args):
+    print("Received SIGTERM, shutting down...")
+    raise KeyboardInterrupt
+
 # Run the main function
 try:
+    signal.signal(signal.SIGTERM, handle_sigterm)
     asyncio.run(main())
 
 except KeyboardInterrupt:
