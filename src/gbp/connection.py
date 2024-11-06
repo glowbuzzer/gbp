@@ -3,6 +3,7 @@ import logging
 from typing import Dict, Any, Callable, Coroutine, TypeVar
 
 import websockets
+from pydantic import ValidationError
 from websockets import ConnectionClosedError
 
 from .client import GbcWebsocketInterface
@@ -21,7 +22,6 @@ class GbcClient(GbcWebsocketInterface):
         self.uri = uri
         self.websocket = None
         self.registered_message_effects: Dict[RegisteredGbcMessageEffect, Any] = {}
-        self.shutdown = False
 
     async def connect(self, blocking=True):
         """
@@ -30,7 +30,6 @@ class GbcClient(GbcWebsocketInterface):
         in the background.
         :param blocking: Whether to block waiting for messages
         """
-        self.shutdown = False
         self.websocket = await websockets.connect(self.uri)
         if blocking:
             await self.receive_messages()
@@ -73,45 +72,59 @@ class GbcClient(GbcWebsocketInterface):
         """
         await self.websocket.send(message)
 
+    async def process_message_object(self, msg: GlowbuzzerInboundMessage):
+        """
+        Process a parsed message from the GBC websocket server. Not intended to be called directly.
+        :param msg: The parsed message to process
+        :return:
+        """
+        # Iterate over all registered effects and call their callback
+        for effect, previous_state in self.registered_message_effects.items():
+            try:
+                current_state = effect.select(msg)
+
+                if current_state and previous_state != current_state:
+                    await effect.on_change(current_state, self)
+                    self.registered_message_effects[effect] = current_state
+
+            except Exception as e:
+                # we want to continue processing the message even if one or more effects fail
+                logging.error("Error processing message: %s", e)
+
+    async def process_message_string(self, message: str):
+        """
+        Process a message from the GBC websocket server. Not intended to be called directly.
+        :param message: The raw string message to process
+        """
+        try:
+            # Convert to a GlowbuzzerInboundMessage object and process it
+            await self.process_message_object(GlowbuzzerInboundMessage.model_validate_json(message))
+        except ValidationError as e:
+            logging.error("Error converting message: %s", e)
+
     async def receive_messages(self):
         """
         Receive messages from the GBC websocket server and invoke the registered effects.
         :return:
         """
-        logging.info("Starting to receive messages")
+        logging.debug("Starting to receive messages")
         n = 0
-        while True:
-            try:
+        try:
+            while True:
                 message = await self.websocket.recv()
-            except ConnectionClosedError:
-                break
 
-            # TODO: remove debug logging, but this is helpful to know that the connection is still alive
-            n += 1
-            if n % 25 == 0:
-                logging.info("Got message: %d", n)
-            try:
-                # Convert to a GlowbuzzerInboundMessage object
-                msg = GlowbuzzerInboundMessage.model_validate_json(message)
-                # Iterate over all registered effects and call their callback
-                for effect, previous_state in self.registered_message_effects.items():
-                    try:
-                        current_state = effect.select(msg)
-                        # TODO: ?: do we need to make sure states are deeply compared?
-                        if current_state and previous_state != current_state:
-                            await effect.on_change(current_state, self)
-                            self.registered_message_effects[effect] = current_state
-                    except Exception as e:
-                        logging.error(f"Error handling effect {effect}: {e}")
+                # TODO: remove debug logging, but this is helpful to know that the connection is still alive
+                n += 1
+                if n % 25 == 0:
+                    logging.debug("Got message: %d", n)
 
-                if self.shutdown:
-                    self.websocket.close()
-                    break
-
-            except Exception as e:
-                logging.error(f"Error handling inbound websocket message: {e}")
+                await self.process_message_string(message)
+        except ConnectionClosedError:
+            logging.debug("Connection closed")
+        finally:
+            logging.debug("Closing connection")
+            await self.close()
 
     async def close(self):
-        self.shutdown = True
         if self.websocket:
             await self.websocket.close()
