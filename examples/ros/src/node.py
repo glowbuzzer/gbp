@@ -6,13 +6,29 @@ from action_simple.action import ActionSimple
 from rclpy.action import ActionServer
 from rclpy.action.server import ServerGoalHandle
 from rclpy.lifecycle.node import Node
+from rclpy.publisher import Publisher
+from std_msgs.msg import String
 
 from gbp import GbcClient
-from gbp.effects import Stream, OpEnabledEffect
+from gbp.client import GbcWebsocketInterface
+from gbp.effects import Stream, OpEnabledEffect, RegisteredGbcMessageEffect
 from gbp.gbc import ActivityStreamItem, ACTIVITYTYPE, DwellActivityParams
+from gbp.gbc_extra import GlowbuzzerInboundMessage
 from gbp.ros import Ros2LoggingHandler
 from gbp.ros import with_asyncio, AsyncIoSupport
 from util import feedback_msg
+
+
+class HeartbeatPublisher(RegisteredGbcMessageEffect):
+    def __init__(self, publisher: Publisher):
+        self.publisher = publisher
+
+    def select(self, msg: GlowbuzzerInboundMessage):
+        if msg.status and msg.status.machine:
+            return msg.status.machine.heartbeat
+
+    async def on_change(self, new_state: int, send: GbcWebsocketInterface):
+        self.publisher.publish(String(data=str(new_state)))
 
 
 class SimpleNode(Node, AsyncIoSupport):
@@ -24,6 +40,7 @@ class SimpleNode(Node, AsyncIoSupport):
         logging.getLogger().addHandler(ros_handler)
 
         self.gbc = gbc
+        gbc.register(HeartbeatPublisher(self.create_publisher(String, "heartbeat", 10)))
 
         self._action_server = ActionServer(self, ActionSimple, "simple", self.action_server_callback)
 
