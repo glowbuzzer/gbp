@@ -20,10 +20,9 @@ class Stream(RegisteredGbcMessageEffect):
         self.sent = []
         self.streamIndex = index
 
-    # noinspection PyMethodMayBeStatic
     def select(self, msg: GlowbuzzerInboundMessage):
         if msg.stream and len(msg.stream) > self.streamIndex:
-            # remove time as it thrashes the on_change handler
+            # remove time as it thrashes the on_change handler when there are no other changes
             copy = StreamStatus(**msg.stream[self.streamIndex].model_dump(exclude={"time"}))
             return copy, self.tag
 

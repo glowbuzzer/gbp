@@ -1,7 +1,7 @@
 import json
 from abc import ABC, abstractmethod
 
-from gbp.gbc import MachineCommand, STREAMCOMMAND
+from gbp.gbc import MachineCommand, STREAMCOMMAND, ActivityStreamItem
 from gbp.gbc_extra import GlowbuzzerStreamRequest
 from gbp.logger import log
 
@@ -33,5 +33,9 @@ class GbcWebsocketInterface(ABC):
 
     async def stream_command(self, index: int, command: STREAMCOMMAND):
         msg = {"command": {"stream": {str(index): {"command": {"streamCommand": command.value}}}}}
-        log.debug("Sending stream command: %s", msg)
+        return await self.send(json.dumps(msg))
+
+    async def stream_solo_activity(self, index: int, activity: ActivityStreamItem):
+        msg = {"command": {"soloActivity": {str(index): {"command": activity.model_dump(exclude_none=True, mode="json")}}}}
+        log.debug("Sending solo activity: %s", msg)
         return await self.send(json.dumps(msg))
