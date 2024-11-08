@@ -66,8 +66,8 @@ class SafetyDigitalInputStatus(SafetyDinStatus, SafetyDinCommand):
 class GlowbuzzerKinematicsConfigurationStatus(BaseModel):
     isNearSingularity: bool
     limitsDisabled: bool
-    froActual: int
-    froTarget: int
+    froActual: float
+    froTarget: float
     configuration: int
     toolIndex: int
     position: Vector3
