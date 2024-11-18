@@ -15,8 +15,8 @@ from gbp.gbc import (
     DwellActivityParams,
     STREAMCOMMAND,
     STREAMSTATE,
-    MoveJointsInterpolatedActivityParams,
     MoveJointsInterpolatedStream,
+    StreamCommand,
 )
 from gbp.gbc_extra import GlowbuzzerInboundMessage
 
@@ -98,7 +98,7 @@ async def test_cancel_stream(gbc: GbcClient, stream: Stream):
         task = asyncio.create_task(stream_callback())  # run in background so we can cancel
 
         await asyncio.sleep(1)  # this is not long enough for the first dwell to complete
-        await gbc.stream_command(0, STREAMCOMMAND.STREAMCOMMAND_STOP)
+        await gbc.command(StreamCommand(streamCommand=STREAMCOMMAND.STREAMCOMMAND_STOP))
 
         await task
 

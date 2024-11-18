@@ -4,7 +4,7 @@ import signal
 from typing import cast
 
 from gbp.connection import GbcClient
-from gbp.effects import HeatbeatEcho
+from gbp.effects import HeartbeatEcho
 from gbp.effects import OpEnabledEffect
 from gbp.effects import OperationErrorLogger, MachineStateLogger
 from gbp.effects import Stream
@@ -19,7 +19,7 @@ async def main():
 
     controller = GbcClient("ws://localhost:9001/ws")
     controller.register(
-        HeatbeatEcho(),  # maintain heartbeat with gbc
+        HeartbeatEcho(),  # maintain heartbeat with gbc
         OperationErrorLogger(),  # log when an operation error is received
         MachineStateLogger(),  # log machine state changes
     )

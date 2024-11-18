@@ -4,7 +4,7 @@ from gbp.gbc import MachineCommand
 from gbp.gbc_extra import GlowbuzzerInboundMessage
 
 
-class HeatbeatEcho(RegisteredGbcMessageEffect):
+class HeartbeatEcho(RegisteredGbcMessageEffect):
     def __init__(self):
         self.previous_heartbeat = 0
 

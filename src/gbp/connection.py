@@ -36,6 +36,15 @@ class GbcClient(GbcWebsocketInterface):
         else:
             asyncio.get_event_loop().create_task(self.receive_messages())
 
+    async def reset(self):
+        """
+        For the tests. Do not use!
+        """
+        if not self.websocket:
+            raise Exception("Not connected")
+
+        await self.websocket.send('{"request": {"requestType": "reset"}}')
+
     async def run_once(self, effect: T, callback: Callable[[T], Coroutine]):
         """
         Run a temporary effect in the context of the connection. The effect will be registered, the callback function will be invoked with

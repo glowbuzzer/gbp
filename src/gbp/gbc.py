@@ -285,7 +285,8 @@ class TRIGGERTYPE(Enum):
 
     TRIGGERTYPE_RISING = auto()
     TRIGGERTYPE_FALLING = auto()
-    TRIGGERTYPE_NONE = auto()
+    TRIGGERTYPE_HIGH = auto()
+    TRIGGERTYPE_LOW = auto()
 
 class ARCTYPE(Enum):
     def _generate_next_value_(name, start, count, last_values):

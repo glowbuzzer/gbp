@@ -5,7 +5,7 @@ import pytest
 import pytest_asyncio
 
 from gbp import log, GbcClient
-from gbp.effects import HeatbeatEcho, OpEnabledEffect
+from gbp.effects import HeartbeatEcho, OpEnabledEffect
 
 
 @pytest_asyncio.fixture
@@ -15,15 +15,15 @@ async def gbc():
     gbc = GbcClient("ws://localhost:9001/ws")
     try:
         gbc.register(
-            HeatbeatEcho(),  # maintain heartbeat with gbc
+            HeartbeatEcho(),  # maintain heartbeat with gbc
         )
 
         await gbc.connect(blocking=False)
-
+        await gbc.reset()
         await gbc.run_once(OpEnabledEffect(), lambda op: cast(OpEnabledEffect, op).enable_operation())
     except Exception as e:
         await gbc.close()
-        logging.error("Failed to connect to GBC: %s", e)
+        # logging.error("Failed to connect to GBC: %s", e)
         pytest.skip("Failed to connect to GBC")
 
     yield gbc

@@ -19,7 +19,6 @@ def gbc(gbc: GbcClient, solo: SoloActivity):
 
     yield gbc
 
-
 @pytest.mark.asyncio
 async def test_solo_activity_completes(gbc: GbcClient, solo: SoloActivity):
     """
@@ -41,7 +40,7 @@ async def test_solo_cancel(gbc: GbcClient, solo: SoloActivity):
     async def run():
         _, dwell = await solo.exec(
             gbc,
-            ActivityStreamItem(activityType=ACTIVITYTYPE.ACTIVITYTYPE_DWELL, dwell=DwellActivityParams(msToDwell=2000)),
+            ActivityStreamItem(activityType=ACTIVITYTYPE.ACTIVITYTYPE_DWELL, dwell=DwellActivityParams(msToDwell=5000)),
         )
         return dwell
 

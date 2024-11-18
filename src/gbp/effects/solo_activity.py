@@ -11,7 +11,7 @@ from gbp.gbc_extra import GlowbuzzerInboundMessage
 class SoloActivity(RegisteredGbcMessageEffect):
     def __init__(self, index: int = 0):
         self.index = index
-        self.tag = 1
+        self.tag = 0
         self.sent = []
 
     def select(self, message: GlowbuzzerInboundMessage) -> Any:
@@ -39,8 +39,8 @@ class SoloActivity(RegisteredGbcMessageEffect):
         copy = activity.model_copy(update={"tag": self.tag})
         future = asyncio.get_event_loop().create_future()
         self.sent.append((copy, future))
-        await send.stream_solo_activity(self.index, copy)
+        await send.command(copy, self.index)
         return await future
 
     async def cancel(self, send: GbcWebsocketInterface):
-        await self.exec(send, ActivityStreamItem(activityType=ACTIVITYTYPE.ACTIVITYTYPE_NONE))
+        return await self.exec(send, ActivityStreamItem(activityType=ACTIVITYTYPE.ACTIVITYTYPE_NONE))

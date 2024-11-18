@@ -42,3 +42,10 @@ class OpEnabledEffect(RegisteredGbcMessageEffect):
 
         self._desired_state_future = asyncio.get_event_loop().create_future()
         return await self._desired_state_future
+
+    async def disable_operation(self):
+        if self.state == MachineState.SWITCH_ON_DISABLED:
+            return
+
+        self._desired_state_future = asyncio.get_event_loop().create_future()
+        return await self._desired_state_future
