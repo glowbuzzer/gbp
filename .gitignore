@@ -2,6 +2,5 @@
 /.idea
 /venv
 /build
-src/gbp.egg-info
 *.egg-info
 /dist

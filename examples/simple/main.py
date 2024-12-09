@@ -3,13 +3,13 @@ import logging
 import signal
 from typing import cast
 
-from gbp.connection import GbcClient
-from gbp.effects import HeartbeatEcho
-from gbp.effects import OpEnabledEffect
-from gbp.effects import OperationErrorLogger, MachineStateLogger
-from gbp.effects import Stream
-from gbp.gbc import ActivityStreamItem, ACTIVITYTYPE, DwellActivityParams
-from gbp.logger import log
+from glowbuzzer.gbp.connection import GbcClient
+from glowbuzzer.gbp.effects import HeartbeatEcho
+from glowbuzzer.gbp.effects import OpEnabledEffect
+from glowbuzzer.gbp.effects import OperationErrorLogger, MachineStateLogger
+from glowbuzzer.gbp.effects import Stream
+from glowbuzzer.gbp.gbc import ActivityStreamItem, ACTIVITYTYPE, DwellActivityParams
+from glowbuzzer.gbp.logger import log
 
 
 async def main():

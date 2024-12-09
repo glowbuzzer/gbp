@@ -7,10 +7,10 @@ Tracks stream state and will push new activities to a stream when capacity is av
 Maintains futures that can be awaited when submitted activities are complete.
 """
 
-from gbp.client import GbcWebsocketInterface
+from glowbuzzer.gbp.client import GbcWebsocketInterface
 from .types import RegisteredGbcMessageEffect
-from gbp.gbc import ActivityStreamItem, STREAMSTATE
-from gbp.gbc_extra import StreamStatus, GlowbuzzerInboundMessage, GlowbuzzerStreamRequest
+from glowbuzzer.gbp.gbc import ActivityStreamItem, STREAMSTATE
+from glowbuzzer.gbp.gbc_extra import StreamStatus, GlowbuzzerInboundMessage, GlowbuzzerStreamRequest
 
 
 class Stream(RegisteredGbcMessageEffect):

@@ -3,22 +3,9 @@ from typing import Any
 
 import pytest
 
-from gbp import GbcClient
-from gbp.client import GbcWebsocketInterface
-from gbp.effects import (
-    Stream,
-    RegisteredGbcMessageEffect,
-)
-from gbp.gbc import (
-    ActivityStreamItem,
-    ACTIVITYTYPE,
-    DwellActivityParams,
-    STREAMCOMMAND,
-    STREAMSTATE,
-    MoveJointsInterpolatedStream,
-    StreamCommand,
-)
-from gbp.gbc_extra import GlowbuzzerInboundMessage
+from glowbuzzer.gbp import GbcClient, RegisteredGbcMessageEffect, GlowbuzzerInboundMessage, GbcWebsocketInterface, \
+    Stream, ActivityStreamItem, ACTIVITYTYPE, DwellActivityParams, StreamCommand, STREAMCOMMAND, \
+    MoveJointsInterpolatedStream, STREAMSTATE
 
 
 class StreamTracker(RegisteredGbcMessageEffect):
@@ -102,21 +89,6 @@ async def test_cancel_stream(gbc: GbcClient, stream: Stream):
 
         await task
 
-        points = []
-        activities = [
-            ActivityStreamItem(
-                activityType=ACTIVITYTYPE.ACTIVITYTYPE_MOVEJOINTSINTERPOLATED,
-                moveJointsInterpolated=(
-                    MoveJointsInterpolatedStream(
-                        kinematicsConfigurationIndex=0,
-                        jointPositionArray=point.positions,
-                        jointVelocityArray=point.velocities,
-                    )
-                ),
-            )
-            for point in points
-        ]
-        await stream.exec(*activities)
         assert tracker.state == STREAMSTATE.STREAMSTATE_STOPPED
         # we don't currently have a way to assert that the second dwell was not executed
     finally:

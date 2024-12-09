@@ -4,8 +4,7 @@ from typing import cast
 import pytest
 import pytest_asyncio
 
-from gbp import log, GbcClient
-from gbp.effects import HeartbeatEcho, OpEnabledEffect
+from glowbuzzer.gbp import log, GbcClient, HeartbeatEcho, OpEnabledEffect
 
 
 @pytest_asyncio.fixture
@@ -21,7 +20,8 @@ async def gbc():
         await gbc.connect(blocking=False)
         await gbc.reset()
         await gbc.run_once(OpEnabledEffect(), lambda op: cast(OpEnabledEffect, op).enable_operation())
-    except Exception as e:
+        log.info("Operation enabled!")
+    except:
         await gbc.close()
         # logging.error("Failed to connect to GBC: %s", e)
         pytest.skip("Failed to connect to GBC")

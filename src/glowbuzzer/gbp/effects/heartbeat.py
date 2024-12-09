@@ -1,7 +1,7 @@
-from gbp.client import GbcWebsocketInterface
-from gbp.effects import RegisteredGbcMessageEffect
-from gbp.gbc import MachineCommand
-from gbp.gbc_extra import GlowbuzzerInboundMessage
+from .types import RegisteredGbcMessageEffect
+from ..gbc_extra import GlowbuzzerInboundMessage
+from ..gbc import MachineCommand
+from ..client import GbcWebsocketInterface
 
 
 class HeartbeatEcho(RegisteredGbcMessageEffect):

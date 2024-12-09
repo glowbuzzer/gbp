@@ -1,10 +1,10 @@
 import asyncio
 
-from gbp.client import GbcWebsocketInterface
-from gbp.effects import RegisteredGbcMessageEffect
-from gbp.gbc import MachineCommand
-from gbp.gbc_extra import GlowbuzzerInboundMessage
-from gbp.machine_state import determine_machine_state, MachineState, DesiredState, handle_machine_state
+from ..connection import RegisteredGbcMessageEffect, GbcWebsocketInterface
+from ..gbc_extra import GlowbuzzerInboundMessage
+from ..gbc import MachineCommand
+from ..machine_state import MachineState, determine_machine_state, handle_machine_state, DesiredState
+
 
 
 # TODO: H: This needs some error handling and perhaps timeout.

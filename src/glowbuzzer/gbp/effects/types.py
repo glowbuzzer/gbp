@@ -1,8 +1,8 @@
 from abc import ABC, abstractmethod
 from typing import Any
 
-from gbp.client import GbcWebsocketInterface
-from gbp.gbc_extra import GlowbuzzerInboundMessage
+from ..client import GbcWebsocketInterface
+from ..gbc_extra import GlowbuzzerInboundMessage
 
 
 class RegisteredGbcMessageEffect(ABC):

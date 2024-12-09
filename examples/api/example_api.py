@@ -1,8 +1,8 @@
-from gbp import GbcClient
-from gbp.effects import HeartbeatEcho, Stream, OpEnabledEffect
-from gbp.effects.input.digital import DigitalInputTriggerEffect
-from gbp.effects.solo_activity import SoloActivity
-from gbp.gbc import ActivityStreamItem, TRIGGERTYPE, DoutCommand
+from glowbuzzer.gbp import GbcClient
+from glowbuzzer.gbp.effects import HeartbeatEcho, Stream, OpEnabledEffect
+from glowbuzzer.gbp.effects.input.digital import DigitalInputTriggerEffect
+from glowbuzzer.gbp.effects.solo_activity import SoloActivity
+from glowbuzzer.gbp.gbc import ActivityStreamItem, TRIGGERTYPE, DoutCommand
 
 
 class SimpleApi:

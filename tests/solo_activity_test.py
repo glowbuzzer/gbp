@@ -2,9 +2,8 @@ import asyncio
 
 import pytest
 
-from gbp import GbcClient
-from gbp.effects.solo_activity import SoloActivity
-from gbp.gbc import ActivityStreamItem, ACTIVITYTYPE, DwellActivityParams
+import glowbuzzer.gbp
+from glowbuzzer.gbp import GbcClient, ActivityStreamItem, ACTIVITYTYPE, DwellActivityParams, SoloActivity
 
 
 @pytest.fixture
@@ -19,11 +18,14 @@ def gbc(gbc: GbcClient, solo: SoloActivity):
 
     yield gbc
 
+
 @pytest.mark.asyncio
 async def test_solo_activity_completes(gbc: GbcClient, solo: SoloActivity):
     """
     Test that a solo activity completes successfully and can be awaited
     """
+
+    gbc.register(glowbuzzer.gbp.MachineStateLogger())
 
     tag, result = await solo.exec(
         gbc, ActivityStreamItem(activityType=ACTIVITYTYPE.ACTIVITYTYPE_DWELL, dwell=DwellActivityParams(msToDwell=2))

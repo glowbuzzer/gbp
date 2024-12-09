@@ -3,7 +3,7 @@ from abc import ABC, abstractmethod
 
 from pydantic import BaseModel
 
-from gbp.gbc import (
+from .gbc import (
     MachineCommand,
     ActivityStreamItem,
     DoutCommand,
@@ -26,9 +26,10 @@ from gbp.gbc import (
     UiinCommand,
     ExternalIinCommand,
     ExternalUiinCommand,
-    ModbusUiinCommand,
+    ModbusUiinCommand
 )
-from gbp.gbc_extra import GlowbuzzerStreamRequest
+
+from .gbc_extra import GlowbuzzerStreamRequest
 
 
 def create_command_message(command: BaseModel, index: int, code: str) -> str:

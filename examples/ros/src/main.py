@@ -4,10 +4,10 @@ import threading
 
 import rclpy
 
-from gbp.connection import GbcClient
-from gbp.effects.debug import OperationErrorLogger, MachineStateLogger
-from gbp.effects.heartbeat import HeartbeatEcho
-from gbp.ros import Ros2Spinner
+from glowbuzzer.gbp.connection import GbcClient
+from glowbuzzer.gbp.effects.debug import OperationErrorLogger, MachineStateLogger
+from glowbuzzer.gbp.effects.heartbeat import HeartbeatEcho
+from glowbuzzer.gbp.ros import Ros2Spinner
 from node import SimpleNode
 
 

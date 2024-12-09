@@ -9,13 +9,13 @@ from rclpy.lifecycle.node import Node
 from rclpy.publisher import Publisher
 from std_msgs.msg import String
 
-from gbp import GbcClient
-from gbp.client import GbcWebsocketInterface
-from gbp.effects import Stream, OpEnabledEffect, RegisteredGbcMessageEffect
-from gbp.gbc import ActivityStreamItem, ACTIVITYTYPE, DwellActivityParams
-from gbp.gbc_extra import GlowbuzzerInboundMessage
-from gbp.ros import Ros2LoggingHandler
-from gbp.ros import with_asyncio, AsyncIoSupport
+from glowbuzzer.gbp import GbcClient
+from glowbuzzer.gbp.client import GbcWebsocketInterface
+from glowbuzzer.gbp.effects import Stream, OpEnabledEffect, RegisteredGbcMessageEffect
+from glowbuzzer.gbp.gbc import ActivityStreamItem, ACTIVITYTYPE, DwellActivityParams
+from glowbuzzer.gbp.gbc_extra import GlowbuzzerInboundMessage
+from glowbuzzer.gbp.ros import Ros2LoggingHandler
+from glowbuzzer.gbp.ros import with_asyncio, AsyncIoSupport
 from util import feedback_msg
 
 

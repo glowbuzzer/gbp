@@ -1,8 +1,10 @@
-from gbp.client import GbcWebsocketInterface
-from gbp.effects import RegisteredGbcMessageEffect
-from gbp.gbc_extra import GlowbuzzerInboundMessage
-from gbp.logger import log
-from gbp.machine_state import MachineState, determine_machine_state
+from .types import RegisteredGbcMessageEffect
+from ..logger import log
+from ..gbc_extra import (
+    GlowbuzzerInboundMessage
+)
+from ..machine_state import MachineState, determine_machine_state
+from ..client import GbcWebsocketInterface
 
 
 class MachineStateLogger(RegisteredGbcMessageEffect):

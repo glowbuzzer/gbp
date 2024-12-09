@@ -1,10 +1,13 @@
 import asyncio
 from typing import Any, Optional
 
-from gbp.client import GbcWebsocketInterface
-from gbp.effects import RegisteredGbcMessageEffect
-from gbp.gbc import TRIGGERTYPE
-from gbp.gbc_extra import GlowbuzzerInboundMessage, DigitalOutputStatus
+from ..types import (
+    GbcWebsocketInterface,
+    RegisteredGbcMessageEffect
+)
+
+from ...gbc import TRIGGERTYPE
+from ...gbc_extra import DigitalOutputStatus, GlowbuzzerInboundMessage
 
 
 class DigitalInputTriggerEffect(RegisteredGbcMessageEffect):

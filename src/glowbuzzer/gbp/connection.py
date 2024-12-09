@@ -6,8 +6,8 @@ import websockets
 from pydantic import ValidationError
 from websockets import ConnectionClosedError
 
+from .effects.types import RegisteredGbcMessageEffect
 from .client import GbcWebsocketInterface
-from .effects import RegisteredGbcMessageEffect
 from .gbc_extra import GlowbuzzerInboundMessage
 
 T = TypeVar("T", bound=RegisteredGbcMessageEffect)

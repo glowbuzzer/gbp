@@ -2,7 +2,7 @@ from typing import List, Optional, Any
 
 from pydantic import BaseModel
 
-from gbp.gbc import (
+from .gbc import (
     STREAMSTATE,
     MachineStatus,
     ActivityStatus,

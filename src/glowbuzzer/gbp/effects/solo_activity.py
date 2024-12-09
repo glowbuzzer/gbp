@@ -1,11 +1,10 @@
 import asyncio
 from typing import Any
 
-from gbp import log
-from gbp.client import GbcWebsocketInterface
-from gbp.effects import RegisteredGbcMessageEffect
-from gbp.gbc import ActivityStatus, ActivityStreamItem, ACTIVITYSTATE, ACTIVITYTYPE
-from gbp.gbc_extra import GlowbuzzerInboundMessage
+from ..client import GbcWebsocketInterface
+from ..effects.types import RegisteredGbcMessageEffect
+from ..gbc import ActivityStatus, ActivityStreamItem, ACTIVITYSTATE, ACTIVITYTYPE
+from ..gbc_extra import GlowbuzzerInboundMessage
 
 
 class SoloActivity(RegisteredGbcMessageEffect):
