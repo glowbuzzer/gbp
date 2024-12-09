@@ -23,6 +23,7 @@ jobs:
           token: ${{ secrets.GITHUB_TOKEN }}
           release-type: python
           package-name: "glowbuzzer-gbp"
+          changelog-types: '[ { "type": "feat", "section": "Feature" }, { "type": "fix", "section": "Bug Fix" }, { "type": "docs", "section": "Documentation" }, { "type": "enh", "section": "Enhancement" }, { "type": "chore", "section": "Chore" } ]'
 
   dist:
     runs-on: ubuntu-latest
