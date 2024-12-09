@@ -2,7 +2,7 @@
 
 This project contains the Python API for interacting with the Glowbuzzer Control (GBC).
 
-Using this API you can connect to GBC and enable the machine, initiate moves and read inputs.
+Using this API you can connect to GBC and enable the machine, initiate moves and read/write inputs.
 
 The API uses asyncio to handle asynchronous communications with the GBC. This allows you to interact with GBC in a
 convenient and efficient way.
