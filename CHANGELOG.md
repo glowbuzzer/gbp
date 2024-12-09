@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.0.3](https://github.com/glowbuzzer/gbp/compare/v1.0.2...v1.0.3) (2024-12-09)
+
+
+### Bug Fix
+
+* Update upload-artifact version ([a718fd7](https://github.com/glowbuzzer/gbp/commit/a718fd7dd36f3ca2052d6c79b17eae845e476a8f))
+
 ## [1.0.2](https://github.com/glowbuzzer/gbp/compare/v1.0.1...v1.0.2) (2024-12-09)
 
 
