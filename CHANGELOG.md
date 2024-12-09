@@ -1,5 +1,14 @@
 # Changelog
 
+## [1.0.4](https://github.com/glowbuzzer/gbp/compare/v1.0.3...v1.0.4) (2024-12-09)
+
+
+### Bug Fix
+
+* Name of beta release action ([cf92003](https://github.com/glowbuzzer/gbp/commit/cf92003803c100e4d6c583b49dba39bb64696d44))
+* Perform actual beta release ([5f0eed8](https://github.com/glowbuzzer/gbp/commit/5f0eed8e29b3bb0f0734c0c3d93e0931cea335da))
+* Perform actual release and add beta release action ([b7fbf29](https://github.com/glowbuzzer/gbp/commit/b7fbf2915fd79296e0779ae555760d54ab167049))
+
 ## [1.0.3](https://github.com/glowbuzzer/gbp/compare/v1.0.2...v1.0.3) (2024-12-09)
 
 
